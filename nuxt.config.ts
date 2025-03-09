@@ -13,4 +13,8 @@ export default defineNuxtConfig({
     '/': { redirect: '/catalog/all' },
     '/catalog': { redirect: '/catalog/all' },
   },
+
+  imports: {
+    dirs: ['types'],
+  },
 })
