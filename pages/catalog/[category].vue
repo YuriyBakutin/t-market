@@ -87,6 +87,9 @@
       <div class="w-100 h-100 d-flex justify-center align-center">
         <h1 class="text-h6">{{ selectedCategoryTitle }}</h1>
       </div>
+      <div class="d-flex ga-4 align-center mr-5">
+        <toCartButton :count="7" @goCart="router.push('/cart')" />
+      </div>
     </v-app-bar>
     <v-navigation-drawer v-model="drawer" app class="position-fixed">
       <v-list>
