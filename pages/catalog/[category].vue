@@ -50,6 +50,33 @@
         ) ?? '')
       )
   })
+
+  const breadcrumbs = computed(() => {
+    const selectedCategorySnake = toSnake(selectedCategory.value)
+
+    const breadcrumbs: IBreadcrumbsItem[] = [
+      {
+        title: 'Catalog',
+        disabled: !selectedCategorySnake,
+        href: '/catalog/all',
+      },
+    ]
+
+    breadcrumbs.push({
+      title: capitalizeFirstLetter(selectedCategory.value) || 'All categories',
+      href: '/catalog/' + (selectedCategorySnake || 'all'),
+    })
+
+    if (selectedProduct.value) {
+      breadcrumbs.push({
+        title: selectedProduct.value.title,
+        disabled: true,
+        href: route.fullPath,
+      })
+    }
+
+    return breadcrumbs
+  })
 </script>
 
 <template>
@@ -86,6 +113,9 @@
       </v-list>
     </v-navigation-drawer>
     <v-main>
+      <v-app-bar app class="position-fixed pl-6 pr-6">
+        <v-breadcrumbs :items="breadcrumbs" class="pa-0" />
+      </v-app-bar>
       <v-container v-if="selectedProduct">
         <Product :product="selectedProduct" />
       </v-container>
