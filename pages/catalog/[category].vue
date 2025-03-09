@@ -12,6 +12,11 @@
     ]
   })
 
+  const getProductsByCategory = (category: string) =>
+    products.value?.filter((product) =>
+      category === '' ? true : product.category === category,
+    ) ?? []
+
   const selectedCategory = ref('')
 
   const selectCategory = (category: string) => {
@@ -74,5 +79,21 @@
         </v-list-item>
       </v-list>
     </v-navigation-drawer>
+    <v-main>
+      <v-container>
+        <v-card class="pa-5 mb-6">
+          <h1 class="text-h4 font-weight-bold">
+            {{ selectedCategoryTitle }}
+          </h1>
+          <v-row class="ga-6 w-100 px-5 mt-6 pb-6">
+            <ProductCard
+              v-for="product in getProductsByCategory(selectedCategory)"
+              :key="product.id"
+              :product="product"
+            />
+          </v-row>
+        </v-card>
+      </v-container>
+    </v-main>
   </v-app>
 </template>
