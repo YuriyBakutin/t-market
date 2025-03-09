@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  defineProps<{
+  const props = defineProps<{
     product: IProduct
   }>()
 
@@ -7,8 +7,12 @@
     return `$ ${price.toFixed(2)}`
   }
 
+  const router = useRouter()
+
   const goToProduct = () => {
-    console.log('—> goToProduct()')
+    router.push(
+      `/catalog/${toSnake(props.product.category)}#${props.product.id}`,
+    )
   }
 
   const addToCart = () => {

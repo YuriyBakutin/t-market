@@ -18,6 +18,8 @@
     ) ?? []
 
   const selectedCategory = ref('')
+  const productId = ref(route.hash?.substring(1))
+  const selectedProduct: Ref<IProduct | null | undefined> = ref(null)
 
   const selectCategory = (category: string) => {
     if (category === '') {
@@ -36,6 +38,10 @@
 
   watchEffect(async () => {
     const categoryFromRoute = route.params.category as string
+
+    selectedProduct.value = products.value?.find(
+      (product) => product.id === +productId.value,
+    )
 
     selectedCategory.value =
       categoryFromRoute === 'all' ? '' : (
@@ -80,7 +86,10 @@
       </v-list>
     </v-navigation-drawer>
     <v-main>
-      <v-container>
+      <v-container v-if="selectedProduct">
+        <Product :product="selectedProduct" />
+      </v-container>
+      <v-container v-else>
         <v-card class="pa-5 mb-6">
           <h1 class="text-h4 font-weight-bold">
             {{ selectedCategoryTitle }}
