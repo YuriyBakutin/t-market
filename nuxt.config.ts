@@ -8,4 +8,9 @@ export default defineNuxtConfig({
   },
 
   modules: ['vuetify-nuxt-module'],
+
+  routeRules: {
+    '/': { redirect: '/catalog/all' },
+    '/catalog': { redirect: '/catalog/all' },
+  },
 })
