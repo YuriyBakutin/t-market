@@ -9,7 +9,7 @@ export default defineNuxtConfig({
 
   modules: [
     'vuetify-nuxt-module',
-    '@pinia/nuxt', // required
+    '@pinia/nuxt',
     'pinia-plugin-persistedstate/nuxt',
   ],
 
@@ -17,6 +17,8 @@ export default defineNuxtConfig({
     '/': { redirect: '/catalog/all' },
     '/catalog': { redirect: '/catalog/all' },
   },
+
+  css: ['@/assets/scss/vuetify.scss'],
 
   imports: {
     dirs: ['types'],
