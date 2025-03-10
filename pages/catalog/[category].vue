@@ -4,7 +4,6 @@
 
   const data = await useFetchWith500('https://fakestoreapi.com/products')
   const products = ref(data as IProduct[])
-  const drawer = ref(true)
 
   const categories = computed(() => {
     return [
@@ -38,9 +37,10 @@
 
   watchEffect(async () => {
     const categoryFromRoute = route.params.category as string
+    const productIdFromRoute = route.hash?.substring(1)
 
     selectedProduct.value = products.value?.find(
-      (product) => product.id === +productId.value,
+      (product) => product.id === +productIdFromRoute,
     )
 
     selectedCategory.value =
@@ -77,6 +77,10 @@
 
     return breadcrumbs
   })
+
+  const drawer = ref(false)
+
+  onMounted(() => {})
 </script>
 
 <template>
@@ -88,7 +92,7 @@
         <h1 class="text-h6">{{ selectedCategoryTitle }}</h1>
       </div>
       <div class="d-flex ga-4 align-center mr-5">
-        <toCartButton :count="7" @goCart="router.push('/cart')" />
+        <toCartButton @goCart="router.push('/cart')" />
       </div>
     </v-app-bar>
     <v-navigation-drawer v-model="drawer" app class="position-fixed">

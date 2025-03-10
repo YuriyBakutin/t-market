@@ -1,10 +1,16 @@
 <script lang="ts" setup>
   const emit = defineEmits(['goCart'])
 
-  const props = defineProps<{
-    disabled?: boolean
-    count?: number
-  }>()
+  const props = withDefaults(
+    defineProps<{
+      disabled?: boolean
+    }>(),
+    {
+      disabled: false,
+    },
+  )
+
+  const cartStore = useCartStore()
 
   const goCart = () => {
     if (props.disabled) {
@@ -25,10 +31,10 @@
     <v-icon>mdi-cart-outline</v-icon>
     <v-badge
       color="error"
-      :content="count"
+      :content="cartStore.cartCount"
       inline
       class="position-absolute top-0 right-0"
-      :class="{ 'opacity-0': !count }"
+      :class="{ 'opacity-0': !cartStore.cartCount }"
     >
     </v-badge>
   </v-btn>
