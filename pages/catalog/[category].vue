@@ -1,68 +1,31 @@
 <script setup lang="ts">
-  const router = useRouter()
   const route = useRoute()
   const productStore = useProductStore()
+  const fromPartsOfRoute = usePartsOfRoute()
 
   productStore.fetchProducts()
 
-  const getProductsByCategory = (category: string) =>
-    productStore.products?.filter((product) =>
-      category === '' ? true : product.category === category,
-    ) ?? []
-
-  const selectedCategory = ref('')
-  const selectedProduct: Ref<IProduct | null | undefined> = ref(null)
-
-  const selectCategory = (category: string) => {
-    if (category === '') {
-      router.push('/catalog/all')
-    } else {
-      router.push(`/catalog/${toSnake(category)}`)
-    }
-  }
-
-  const selectedCategoryTitle = computed(() => {
-    if (selectedCategory.value === '') {
-      return 'All categories'
-    }
-    return capitalizeFirstLetter(selectedCategory.value)
-  })
-
-  watchEffect(async () => {
-    const categoryFromRoute = route.params.category as string
-    const productIdFromRoute = route.hash?.substring(1)
-
-    selectedProduct.value = productStore.products?.find(
-      (product) => product.id === +productIdFromRoute,
-    )
-
-    selectedCategory.value =
-      categoryFromRoute === 'all' ? '' : (
-        (productStore.categories?.find(
-          (category) => toSnake(category) === categoryFromRoute,
-        ) ?? '')
-      )
-  })
-
   const breadcrumbs = computed(() => {
-    const selectedCategorySnake = toSnake(selectedCategory.value)
+    const selectedCategorySnake = toSnake(fromPartsOfRoute.category.value)
 
     const breadcrumbs: IBreadcrumbsItem[] = [
       {
         title: 'Catalog',
-        disabled: !selectedCategorySnake,
+        disabled: fromPartsOfRoute.category.value === 'all categories',
         href: '/catalog/all',
       },
     ]
 
-    breadcrumbs.push({
-      title: capitalizeFirstLetter(selectedCategory.value) || 'All categories',
-      href: '/catalog/' + (selectedCategorySnake || 'all'),
-    })
-
-    if (selectedProduct.value) {
+    if (fromPartsOfRoute.category.value !== 'all categories')
       breadcrumbs.push({
-        title: selectedProduct.value.title,
+        title: capitalizeFirstLetter(fromPartsOfRoute.category.value),
+        href: '/catalog/' + selectedCategorySnake,
+        disabled: !fromPartsOfRoute.product.value,
+      })
+
+    if (fromPartsOfRoute.product.value) {
+      breadcrumbs.push({
+        title: fromPartsOfRoute.title.value,
         disabled: true,
         href: route.fullPath,
       })
@@ -75,19 +38,34 @@
 <template>
   <v-main>
     <v-app-bar app class="position-fixed pl-6 pr-6">
-      <v-breadcrumbs :items="breadcrumbs" class="pa-0" />
+      <v-breadcrumbs :items="breadcrumbs" class="pa-0">
+        <template v-slot:item="{ item }">
+          <NuxtLink
+            :to="item.href"
+            :disabled="item.disabled"
+            class="v-breadcrumbs-item--link text-decoration-none"
+            :class="
+              item.disabled ? 'v-breadcrumbs-item--disabled' : 'cursor-pointer'
+            "
+          >
+            {{ item.title }}
+          </NuxtLink>
+        </template>
+      </v-breadcrumbs>
     </v-app-bar>
-    <v-container v-if="selectedProduct">
-      <Product :product="selectedProduct" />
+    <v-container v-if="fromPartsOfRoute.product.value">
+      <Product :product="fromPartsOfRoute.product.value" />
     </v-container>
     <v-container v-else>
       <v-card class="pa-5 mb-6">
         <h1 class="text-h4 font-weight-bold">
-          {{ selectedCategoryTitle }}
+          {{ capitalizeFirstLetter(fromPartsOfRoute.category.value) }}
         </h1>
         <v-row class="ga-6 w-100 px-5 mt-6 pb-6">
           <ProductCard
-            v-for="product in getProductsByCategory(selectedCategory)"
+            v-for="product in productStore.productsByCategory(
+              fromPartsOfRoute.category.value,
+            )"
             :key="product.id"
             :product="product"
           />
