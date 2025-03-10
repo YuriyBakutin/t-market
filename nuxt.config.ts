@@ -7,7 +7,11 @@ export default defineNuxtConfig({
     port: process.env.NITRO_PORT ? +process.env.NITRO_PORT : 4012,
   },
 
-  modules: ['vuetify-nuxt-module'],
+  modules: [
+    'vuetify-nuxt-module',
+    '@pinia/nuxt', // required
+    'pinia-plugin-persistedstate/nuxt',
+  ],
 
   routeRules: {
     '/': { redirect: '/catalog/all' },
